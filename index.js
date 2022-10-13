@@ -5,13 +5,15 @@ const axios = require('axios');
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-//expose all metrics 
+//expose all default metrics 
 //const collectDefaultMetrics = client.collectDefaultMetrics;
 //collectDefaultMetrics();
 
 //register custom metrics
 const Registry = client.Registry;
 const register = new Registry();
+
+
 const histogram = new client.Histogram({
     name: 'Histogram:http_request_duration',
     help: 'Duration of HTTP requests in ms',
