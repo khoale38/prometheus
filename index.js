@@ -6,8 +6,8 @@ const axios = require('axios');
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 //expose all default metrics 
-//const collectDefaultMetrics = client.collectDefaultMetrics;
-//collectDefaultMetrics();
+// const collectDefaultMetrics = client.collectDefaultMetrics;
+// collectDefaultMetrics();
 
 //register custom metrics
 const Registry = client.Registry;
@@ -28,21 +28,22 @@ const counter = new client.Counter({
     name: 'Counter:Count_Demo',
     help: 'Demo Counter Work'
   });
-
 register.registerMetric(counter);
+
 
 
 const gauge = new client.Gauge({ name: 'Gauge:Gauge_Demo', help: 'Demo Gauge Work' });
 register.registerMetric(gauge);
 
 
+
 const summary = new client.Summary({
     name: 'Summary:Summary_Demo',
     help: 'Demo Summary Work',
-    percentiles: [ 0.1, 0.5 , 0.75, 0.9],
+    percentiles: [ 0.1, 0.5 , 0.75, 1],
   });
+register.registerMetric(summary);
 
-  register.registerMetric(summary);
 
 app.get('/', (req, res) => res.json({
     'GET /': 'All Routes',
@@ -79,22 +80,35 @@ app.get('/', (req, res) => res.json({
     gauge.inc(2);
   });
   app.get("/gaugeminus", function(req, res) {
-    res.send( 'gauge+')
+    res.send( 'gauge-')
     gauge.dec(2);
   });
 
 
 
   app.get('/summary', async (req, res) => {
-    const observe_response_time = summary.startTimer();
-  
-    res.send( 'summary')
-    // observe_response_time();
-    summary.observe( observe_response_time());
 
+
+
+    const observe_response_time = summary.startTimer();
+    await delay(1000);
+    res.send('Summary')
+    observe_response_time();
+    //summary.observe( observe_response_time());
 
   })
 
+  app.get('/summary2', async (req, res) => {
+
+
+    const observe_response_time = summary.startTimer();
+    await delay(5000);
+    res.send('Summary')
+    observe_response_time();
+ 
+    //summary.observe( observe_response_time());
+
+  })
 
 
   // hello world rest endpoint 
